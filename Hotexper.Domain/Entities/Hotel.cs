@@ -1,0 +1,10 @@
+﻿using System.ComponentModel.DataAnnotations;
+
+namespace Hotexper.Domain.Entities;
+
+public class Hotel
+{
+    [Key]
+    public Guid Id { get; set; }
+    public string Name { get; set; } = null!;
+}
