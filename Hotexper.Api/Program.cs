@@ -1,3 +1,5 @@
+using System.Reflection;
+using FluentValidation;
 using Hotexper.Domain.Entities;
 using Hotexper.Domain.Repositories;
 using Hotexper.Persistence;
@@ -14,6 +16,7 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddEntityFrameworkStores<AppDbContext>();
 
 builder.Services.AddFluentEmail("admin@exmaple.com").AddSmtpSender("localhost", 25);
+builder.Services.AddValidatorsFromAssembly(Assembly.GetAssembly(typeof(Program)));
 
 builder.Services.AddTransient<IHotelRepository, HotelRepository>();
 
