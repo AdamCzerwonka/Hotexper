@@ -26,13 +26,15 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost]
+    [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     public async Task<IActionResult> CreateAccount([FromBody] CreateUserModel createUser,
         CancellationToken cancellationToken)
     {
         var validationResult = await _createUserValidator.ValidateAsync(createUser, cancellationToken);
         if (!validationResult.IsValid)
         {
-            return BadRequest(validationResult.Errors.Select(x=>x.ErrorMessage));
+            return BadRequest(validationResult.Errors.Select(x => x.ErrorMessage));
         }
 
         var userIdDb = await _userManager.FindByEmailAsync(createUser.Email);
@@ -49,13 +51,12 @@ public class AccountController : ControllerBase
         };
 
         var result = await _userManager.CreateAsync(user, createUser.Password);
-        if (result.Succeeded)
+        if (!result.Succeeded)
         {
-            await _fluentEmail.To(user.Email).Body("User created").SendAsync(cancellationToken);
-            return Ok();
+            return BadRequest(result.Errors);
         }
 
-
-        return BadRequest(result.Errors);
+        await _fluentEmail.To(user.Email).Body("User created").SendAsync(cancellationToken);
+        return Ok();
     }
 }
