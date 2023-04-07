@@ -13,6 +13,8 @@ builder.Services.AddIdentity<User, IdentityRole>()
     .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<AppDbContext>();
 
+builder.Services.AddFluentEmail("admin@exmaple.com").AddSmtpSender("localhost", 25);
+
 builder.Services.AddTransient<IHotelRepository, HotelRepository>();
 
 builder.Services.AddControllers();
