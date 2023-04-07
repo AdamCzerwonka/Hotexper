@@ -56,7 +56,29 @@ public class AccountController : ControllerBase
             return BadRequest(result.Errors);
         }
 
-        await _fluentEmail.To(user.Email).Body("User created").SendAsync(cancellationToken);
+        var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+        await _fluentEmail.To(user.Email).Body(token).SendAsync(cancellationToken);
         return Ok();
     }
+
+    [HttpPost("email")]
+    public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailModel verifyEmailModel)
+    {
+        var user = await _userManager.FindByIdAsync(verifyEmailModel.UserId);
+        if (user is null)
+        {
+            return BadRequest();
+        }
+
+        var result = await _userManager.ConfirmEmailAsync(user, verifyEmailModel.Token);
+        if (result.Succeeded)
+        {
+            return Ok();
+        }
+
+        return BadRequest();
+    }
+
 }
+
+public record VerifyEmailModel(string UserId, string Token);
