@@ -1,4 +1,5 @@
-﻿using Hotexper.Domain.Repositories;
+﻿using Hotexper.Api.DTOs;
+using Hotexper.Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hotexper.Api.Controllers;
@@ -17,7 +18,8 @@ public class HotelController : ControllerBase
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var hotels = await _hotelRepository.GetAllAsync(cancellationToken);
-        return Ok(hotels);
+        var result = hotels.Select(x => new HotelResponseDto(x));
+        return Ok(result);
     }
 
     
@@ -30,7 +32,8 @@ public class HotelController : ControllerBase
             return NotFound();
         }
 
-        return Ok(hotel);
+        var result = new HotelResponseDto(hotel);
+        return Ok(result);
     }
 
 
