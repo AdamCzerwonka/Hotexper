@@ -14,10 +14,25 @@ public class HotelController : ControllerBase
     }
 
     [HttpGet]
-    public IActionResult GetTest()
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
-        return Ok();
+        var hotels = await _hotelRepository.GetAllAsync(cancellationToken);
+        return Ok(hotels);
     }
+
+    
+    [HttpGet("{id:guid}")]
+    public async Task<IActionResult> Get(Guid id, CancellationToken cancellationToken)
+    {
+        var hotel = await _hotelRepository.GetAsync(id, cancellationToken);
+        if (hotel is null)
+        {
+            return NotFound();
+        }
+
+        return Ok(hotel);
+    }
+
 
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateHotelModel model, CancellationToken cancellationToken)
