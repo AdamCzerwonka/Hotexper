@@ -26,6 +26,7 @@ builder.Services.AddFluentEmail("admin@exmaple.com").AddSmtpSender("localhost", 
 builder.Services.AddValidatorsFromAssembly(Assembly.GetAssembly(typeof(Program)));
 
 builder.Services.AddTransient<IHotelRepository, HotelRepository>();
+builder.Services.AddTransient<IRoomRepository, RoomRepository>();
 builder.Services.AddTransient<IJwtTokenService, JwtTokenService>();
 
 builder.Services.AddSwaggerGen(setup =>
