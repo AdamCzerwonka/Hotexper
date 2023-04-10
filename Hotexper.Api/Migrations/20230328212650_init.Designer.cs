@@ -13,7 +13,7 @@ namespace Hotexper.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
     [Migration("20230328212650_init")]
-    partial class init
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
