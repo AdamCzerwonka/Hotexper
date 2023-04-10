@@ -19,4 +19,12 @@ public class RoomRepository : IRoomRepository
             .Rooms
             .AsNoTracking()
             .ToListAsync(cancellationToken);
+
+    public async Task<Room> CreateAsync(Room room, CancellationToken cancellationToken)
+    {
+        _context.Rooms.Add(room);
+        await _context.SaveChangesAsync(cancellationToken);
+
+        return room;
+    }
 }
