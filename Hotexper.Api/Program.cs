@@ -36,6 +36,32 @@ builder.Services.AddSwaggerGen(setup =>
         Version = "v1",
         Title = "Hotexper Api",
     });
+    setup.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        BearerFormat = "JWT",
+        Description = "Jwt auht",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.Http,
+        Scheme = JwtBearerDefaults.AuthenticationScheme
+    });
+    setup.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                },
+                Scheme = "oauth2",
+                Name = "Bearer",
+                In = ParameterLocation.Header
+            },
+            new List<string>()
+        }
+    });
 });
 
 builder.Services.AddAuthentication(options =>
