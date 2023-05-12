@@ -18,6 +18,17 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.RegisterPersistence();
 builder.Services.ConfigureOptions<JwtOptionsSetup>();
 
+builder.Services.AddCors(opt =>
+{
+    opt.AddPolicy("default", policyBuilder =>
+    {
+        policyBuilder
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowAnyOrigin();
+    });
+});
+
 builder.Services.AddIdentity<User, IdentityRole>()
     .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<AppDbContext>();
@@ -88,6 +99,8 @@ builder.Services.AddAuthentication(options =>
 
 builder.Services.AddControllers();
 var app = builder.Build();
+
+app.UseCors("default");
 
 app.UseRouting();
 app.UseAuthentication();
