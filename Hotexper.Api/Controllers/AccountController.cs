@@ -34,7 +34,9 @@ public class AccountController : ControllerBase
         var validationResult = await _createUserValidator.ValidateAsync(createUser, cancellationToken);
         if (!validationResult.IsValid)
         {
-            return BadRequest(validationResult.Errors.Select(x => x.ErrorMessage));
+            var error = new ErrorModel(StatusCodes.Status422UnprocessableEntity,
+                validationResult.Errors.Select(x => x.ErrorMessage));
+            return UnprocessableEntity(error);
         }
 
         var userIdDb = await _userManager.FindByEmailAsync(createUser.Email);
@@ -78,7 +80,6 @@ public class AccountController : ControllerBase
 
         return BadRequest();
     }
-
 }
 
 public record VerifyEmailModel(string UserId, string Token);
