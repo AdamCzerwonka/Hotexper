@@ -24,13 +24,22 @@ public class LoginController : ControllerBase
         var user = await _userManager.FindByEmailAsync(loginModel.Email);
         if (user is null)
         {
-            return UnprocessableEntity(new { Status = 400, Error = "Given username and password combination is wrong" });
+            return UnprocessableEntity(new
+                { Status = 400, Error = "Given username and password combination is wrong" });
         }
 
         var isPasswordCorrect = await _userManager.CheckPasswordAsync(user, loginModel.Password);
         if (!isPasswordCorrect)
         {
-            return UnprocessableEntity(new { Status = 400, Error = "Given username and password combination is wrong" });
+            return UnprocessableEntity(new
+                { Status = 400, Error = "Given username and password combination is wrong" });
+        }
+
+        var isEmailConfirmed = await _userManager.IsEmailConfirmedAsync(user);
+        if (!isEmailConfirmed)
+        {
+            return UnprocessableEntity(new
+                { Status = 400, Error = "Email not confirmed. Check your email." });
         }
 
         var token = _tokenService.GenerateToken(user);

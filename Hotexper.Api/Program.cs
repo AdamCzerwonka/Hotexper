@@ -29,7 +29,7 @@ builder.Services.AddCors(opt =>
     });
 });
 
-builder.Services.AddIdentity<User, IdentityRole>()
+builder.Services.AddIdentity<User, IdentityRole>(options => { options.SignIn.RequireConfirmedEmail = true; })
     .AddDefaultTokenProviders()
     .AddEntityFrameworkStores<AppDbContext>();
 
