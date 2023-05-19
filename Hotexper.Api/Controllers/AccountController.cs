@@ -1,9 +1,11 @@
-﻿using FluentEmail.Core;
+﻿using System.ComponentModel.DataAnnotations;
+using FluentEmail.Core;
 using FluentValidation;
 using Hotexper.Api.Models;
 using Hotexper.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 
 namespace Hotexper.Api.Controllers;
 
@@ -42,7 +44,9 @@ public class AccountController : ControllerBase
         var userIdDb = await _userManager.FindByEmailAsync(createUser.Email);
         if (userIdDb is not null)
         {
-            return BadRequest(new { Error = "User with given email already exists" });
+            var error = new ErrorModel(StatusCodes.Status422UnprocessableEntity,
+                new List<string>() { "User with given email already exists" });
+            return UnprocessableEntity(error);
         }
 
         var user = new User()
@@ -59,14 +63,16 @@ public class AccountController : ControllerBase
         }
 
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
-        await _fluentEmail.To(user.Email).Body(token).SendAsync(cancellationToken);
+        var url = $"http://localhost:3000/register/verify?userId={user.Id}&token={token}";
+
+        await _fluentEmail.To(user.Email).Body(url).SendAsync(cancellationToken);
         return Ok();
     }
 
-    [HttpPost("email")]
-    public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailModel verifyEmailModel)
+    [HttpPost("{id:guid}/verify")]
+    public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailModel verifyEmailModel, Guid id)
     {
-        var user = await _userManager.FindByIdAsync(verifyEmailModel.UserId);
+        var user = await _userManager.FindByIdAsync(id.ToString());
         if (user is null)
         {
             return BadRequest();
@@ -82,4 +88,4 @@ public class AccountController : ControllerBase
     }
 }
 
-public record VerifyEmailModel(string UserId, string Token);
+public record VerifyEmailModel(string Token);
