@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Hotexper.Api.Controllers;
 
+[ApiController]
 [Route("/api/hotel")]
 public class HotelController : ControllerBase
 {
@@ -40,9 +41,9 @@ public class HotelController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> Create([FromBody] CreateHotelModel model, CancellationToken cancellationToken)
     {
-        var result = await _hotelRepository.Create(model.Name, cancellationToken);
+        var result = await _hotelRepository.Create(model.Name, model.Description, model.Slug, cancellationToken);
         return Ok(result);
     }
 }
 
-public record CreateHotelModel(string Name);
+public record CreateHotelModel(string Name, string Description, string? Slug);

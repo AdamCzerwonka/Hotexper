@@ -14,12 +14,16 @@ public class HotelRepository : IHotelRepository
         _context = context;
     }
 
-    public async Task<Hotel> Create(string name, CancellationToken cancellationToken = default)
+    public async Task<Hotel> Create(string name,string description, string? slug, CancellationToken cancellationToken = default)
     {
+        slug ??= name.ToLower().Replace(' ', '_');
+        
         var hotel = new Hotel
         {
+            Id = Guid.NewGuid(),
             Name = name,
-            Id = Guid.NewGuid()
+            Description = description,
+            Slug = slug
         };
 
         _context.Hotels.Add(hotel);
@@ -32,6 +36,7 @@ public class HotelRepository : IHotelRepository
         => await _context
             .Hotels
             .AsNoTracking()
+            .OrderBy(x=>x.Name)
             .ToListAsync(cancellationToken);
 
     public async Task<Hotel?> GetAsync(Guid id, CancellationToken cancellationToken)
