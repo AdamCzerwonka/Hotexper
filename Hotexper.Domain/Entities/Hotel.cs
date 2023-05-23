@@ -9,5 +9,9 @@ public class Hotel
 
     public string Name { get; set; } = null!;
 
+    public string Slug { get; set; } = null!;
+    
+    public string Description { get; set; } = null!;
+
     public ICollection<Room> Rooms { get; set; } = null!;
 }
