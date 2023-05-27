@@ -15,6 +15,7 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole, string>
     public DbSet<Hotel> Hotels => Set<Hotel>();
     public DbSet<Room> Rooms => Set<Room>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
+    public DbSet<HotelImage> HotelImages => Set<HotelImage>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
@@ -35,6 +36,12 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole, string>
             .HasOne(x => x.User)
             .WithMany(x => x.Reservations)
             .HasForeignKey(x => x.UserId);
+
+        builder
+            .Entity<HotelImage>()
+            .HasOne(x => x.Hotel)
+            .WithMany(x => x.HotelImages)
+            .HasForeignKey(x => x.HotelId);
         
         base.OnModelCreating(builder);
     }
