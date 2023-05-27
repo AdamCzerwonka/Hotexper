@@ -54,6 +54,8 @@ try
     builder.Services.AddTransient<IHotelRepository, HotelRepository>();
     builder.Services.AddTransient<IRoomRepository, RoomRepository>();
     builder.Services.AddTransient<IJwtTokenService, JwtTokenService>();
+    builder.Services.AddTransient<IImageService, ImageService>();
+    builder.Services.AddTransient<IHotelImageRepository, HotelImageRepository>();
 
     builder.Services.AddSwaggerGen(setup =>
     {
@@ -129,11 +131,10 @@ try
 }
 catch (HostAbortedException _)
 {
-    
 }
 catch (Exception e)
 {
-    Log.Fatal(e,"Application terminated!");
+    Log.Fatal(e, "Application terminated!");
 }
 finally
 {
