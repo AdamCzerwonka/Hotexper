@@ -18,33 +18,9 @@ public class HotelRepository : IHotelRepository
         _logger = logger;
     }
 
-    public async Task<ErrorOr<Hotel>> Create(string name, string description, string? slug,
+    public async Task<Hotel> Create(string name, string description, string slug,
         CancellationToken cancellationToken = default)
     {
-        if (slug is not null)
-        {
-            var result = await GetBySlugAsync(slug, cancellationToken);
-            if (result is not null)
-            {
-                return Error.Failure(description: "Hotel with given slug already exists");
-            }
-        }
-        else
-        { 
-            _logger.LogInformation("Slug not passed! Generating slug.");
-            Hotel? result = null;
-            var number = 0;
-            slug = name.ToLower().Replace(' ', '_');
-            var startSlug = slug;
-            do
-            {
-                slug = startSlug + (number == 0 ? "" : number);
-                _logger.LogInformation("Testing slug: '{slug}'", slug);
-                result = await GetBySlugAsync(slug, cancellationToken);
-                number++;
-            } while (result is not null);
-        }
-
         var hotel = new Hotel
         {
             Id = Guid.NewGuid(),

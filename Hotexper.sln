@@ -6,6 +6,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hotexper.Persistence", "Hot
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hotexper.Api", "Hotexper.Api\Hotexper.Api.csproj", "{9EA90DDA-F75D-49E8-9484-1D0149185BAC}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Hotexper.Tests", "Hotexper.Tests\Hotexper.Tests.csproj", "{3421DAFC-5363-4653-A3D3-3247A73E9343}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -24,5 +26,9 @@ Global
 		{9EA90DDA-F75D-49E8-9484-1D0149185BAC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9EA90DDA-F75D-49E8-9484-1D0149185BAC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9EA90DDA-F75D-49E8-9484-1D0149185BAC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{3421DAFC-5363-4653-A3D3-3247A73E9343}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3421DAFC-5363-4653-A3D3-3247A73E9343}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3421DAFC-5363-4653-A3D3-3247A73E9343}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3421DAFC-5363-4653-A3D3-3247A73E9343}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
