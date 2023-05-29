@@ -1,7 +1,11 @@
-﻿using Hotexper.Api.DTOs;
+﻿using System.Net;
+using ErrorOr;
+using Hotexper.Api.DTOs;
+using Hotexper.Api.Models;
 using Hotexper.Api.Services;
 using Hotexper.Domain.Entities;
 using Hotexper.Domain.Repositories;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hotexper.Api.Controllers;
@@ -14,7 +18,8 @@ public class HotelController : ControllerBase
     private readonly IImageService _imageService;
     private readonly IHotelImageRepository _hotelImageRepository;
 
-    public HotelController(IHotelRepository hotelRepository, IImageService imageService, IHotelImageRepository hotelImageRepository)
+    public HotelController(IHotelRepository hotelRepository, IImageService imageService,
+        IHotelImageRepository hotelImageRepository)
     {
         _hotelRepository = hotelRepository;
         _imageService = imageService;
@@ -58,10 +63,37 @@ public class HotelController : ControllerBase
 
 
     [HttpPost]
-    public async Task<IActionResult> Create([FromBody] CreateHotelModel model, CancellationToken cancellationToken)
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    public async Task<ActionResult<HotelResponseDto>> Create([FromBody] CreateHotelModel model,
+        CancellationToken cancellationToken)
     {
-        var result = await _hotelRepository.Create(model.Name, model.Description, model.Slug, cancellationToken);
-        return result.Match<IActionResult>(Ok, UnprocessableEntity);
+        string slug;
+        if (model.Slug is not null)
+        {
+            slug = model.Slug;
+            var result = await _hotelRepository.GetBySlugAsync(slug, cancellationToken);
+            if (result is not null)
+            {
+                return UnprocessableEntity(new ErrorModel(HttpStatusCode.UnprocessableEntity,
+                    new[] { "Hotel with given slug already exists." }));
+            }
+        }
+        else
+        {
+            Hotel? result;
+            var number = 0;
+            slug = model.Name.ToLower().Replace(' ', '_');
+            var startSlug = slug;
+            do
+            {
+                slug = startSlug + (number == 0 ? "" : number);
+                result = await _hotelRepository.GetBySlugAsync(slug, cancellationToken);
+                number++;
+            } while (result is not null);
+        }
+
+        var res = await _hotelRepository.Create(model.Name, model.Description, slug, cancellationToken);
+        return Created("test", HotelResponseDto.Map(res));
     }
 
     [HttpPost("{id:guid}/image")]
