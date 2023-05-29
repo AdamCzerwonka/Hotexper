@@ -1,3 +1,10 @@
-﻿namespace Hotexper.Api.Models;
+﻿using System.Net;
 
-public record ErrorModel(int StatusCode, IEnumerable<string> Errors);
+namespace Hotexper.Api.Models;
+
+public record ErrorModel(int StatusCode, IEnumerable<string> Errors)
+{
+    public ErrorModel(HttpStatusCode code, IEnumerable<string> Errors) : this((int)code, Errors)
+    {
+    }
+}
