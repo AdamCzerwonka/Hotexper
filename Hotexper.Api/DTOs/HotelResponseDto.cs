@@ -9,6 +9,8 @@ public class HotelResponseDto
     public string Description { get; set; } = null!;
     public string Slug { get; set; } = null!;
 
+    public IEnumerable<ImageDto> Images { get; set; } = null!;
+
     public static HotelResponseDto Map(Hotel hotel)
     {
         var hotelDto = new HotelResponseDto()
@@ -16,7 +18,8 @@ public class HotelResponseDto
             Id = hotel.Id,
             Name = hotel.Name,
             Description = hotel.Description,
-            Slug = hotel.Slug
+            Slug = hotel.Slug,
+            Images = hotel.HotelImages.Select(x => new ImageDto(x.Id.ToString(), x.AltText))
         };
 
         return hotelDto;
