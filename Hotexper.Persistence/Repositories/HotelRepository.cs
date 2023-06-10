@@ -1,21 +1,17 @@
-﻿using ErrorOr;
-using Hotexper.Domain.Entities;
+﻿using Hotexper.Domain.Entities;
 using Hotexper.Domain.Repositories;
 using Hotexper.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.Extensions.Logging;
 
 namespace Hotexper.Persistence.Repositories;
 
 public class HotelRepository : IHotelRepository
 {
     private readonly AppDbContext _context;
-    private readonly ILogger<HotelRepository> _logger;
 
-    public HotelRepository(AppDbContext context, ILogger<HotelRepository> logger)
+    public HotelRepository(AppDbContext context)
     {
         _context = context;
-        _logger = logger;
     }
 
     public async Task<Hotel> Create(string name, string description, string slug,
@@ -35,9 +31,10 @@ public class HotelRepository : IHotelRepository
         return hotel;
     }
 
-    public async Task<IEnumerable<Hotel>> GetAllAsync(CancellationToken cancellationToken)
+    public async Task<List<Hotel>> GetAllAsync(CancellationToken cancellationToken)
         => await _context
             .Hotels
+            .Include(x => x.HotelImages)
             .AsNoTracking()
             .OrderBy(x => x.Name)
             .ToListAsync(cancellationToken);
@@ -52,5 +49,13 @@ public class HotelRepository : IHotelRepository
         => await _context
             .Hotels
             .AsNoTracking()
+            .FirstOrDefaultAsync(x => x.Slug == slug, cancellationToken);
+
+    public async Task<Hotel?> GetBySlugWithHotelImagesAsync(string slug, CancellationToken cancellationToken)
+        => await _context
+            .Hotels
+            .Include(x => x.HotelImages)
+            .AsNoTracking()
+            .OrderBy(x => x.Name)
             .FirstOrDefaultAsync(x => x.Slug == slug, cancellationToken);
 }
