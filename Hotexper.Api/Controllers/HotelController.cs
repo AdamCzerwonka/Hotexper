@@ -1,11 +1,9 @@
 ﻿using System.Net;
-using ErrorOr;
 using Hotexper.Api.DTOs;
 using Hotexper.Api.Models;
 using Hotexper.Api.Services;
 using Hotexper.Domain.Entities;
 using Hotexper.Domain.Repositories;
-using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Hotexper.Api.Controllers;
@@ -27,38 +25,43 @@ public class HotelController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(List<HotelResponseDto>), 200)]
+    [ProducesResponseType(typeof(ErrorModel), 404)]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var hotels = await _hotelRepository.GetAllAsync(cancellationToken);
-        var result = hotels.Select(x => HotelResponseDto.Map(x));
-        return Ok(result);
-    }
 
-
-    [HttpGet("{id:guid}")]
-    public async Task<IActionResult> GetById(Guid id, CancellationToken cancellationToken)
-    {
-        var hotel = await _hotelRepository.GetByIdAsync(id, cancellationToken);
-        if (hotel is null)
+        if (hotels.Any())
         {
-            return NotFound();
+            var result = hotels.Select(x => new HotelResponseDto()
+            {
+                Name = x.Name,
+                Description = x.Description,
+                Id = x.Id,
+                Images = x.HotelImages.Select(i => new ImageDto($"/{i.Id}", i.AltText))
+            }).ToList();
+            return Ok(result);
         }
 
-        var result = HotelResponseDto.Map(hotel);
-        return Ok(result);
+        var error = new ErrorModel(HttpStatusCode.NotFound, new[] { "No hotels found" });
+        return NotFound(error);
     }
 
     [HttpGet("{slug}")]
-    public async Task<IActionResult> GetBySlug(string slug, CancellationToken cancellationToken)
+    [ProducesResponseType(typeof(HotelResponseDto), 200)]
+    [ProducesResponseType(typeof(ErrorModel), 404)]
+    public async Task<IActionResult> Get(string slug, CancellationToken cancellationToken)
     {
-        var hotel = await _hotelRepository.GetBySlugAsync(slug, cancellationToken);
-        if (hotel is null)
+        var hotel = await _hotelRepository.GetBySlugWithHotelImagesAsync(slug, cancellationToken);
+
+        if (hotel is not null)
         {
-            return NotFound();
+            var hotelDto = HotelResponseDto.Map(hotel);
+            return Ok(hotelDto);
         }
 
-        var result = HotelResponseDto.Map(hotel);
-        return Ok(result);
+        var error = new ErrorModel(HttpStatusCode.NotFound, new[] { "Hotel with given slug does not exists" });
+        return NotFound(error);
     }
 
 
