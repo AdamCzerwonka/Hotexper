@@ -5,7 +5,6 @@ using Hotexper.Api.Services;
 using Hotexper.Domain.Entities;
 using Hotexper.Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 
 namespace Hotexper.Api.Controllers;
 
