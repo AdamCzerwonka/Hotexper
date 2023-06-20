@@ -25,11 +25,17 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole, string>
             .HasForeignKey(x => x.HotelId);
 
         builder
+            .Entity<Room>()
+            .HasMany(x => x.RoomItems)
+            .WithOne(x => x.Room)
+            .HasForeignKey(x => x.RoomId);
+
+        builder
             .Entity<Reservation>()
             .HasOne(x => x.Room)
             .WithMany(x => x.Reservations)
             .HasForeignKey(x => x.RoomId);
-        
+
         builder
             .Entity<Reservation>()
             .HasOne(x => x.User)
@@ -41,7 +47,7 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole, string>
             .HasOne(x => x.Hotel)
             .WithMany(x => x.HotelImages)
             .HasForeignKey(x => x.HotelId);
-        
+
         base.OnModelCreating(builder);
     }
 }

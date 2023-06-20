@@ -4,6 +4,7 @@ using Hotexper.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hotexper.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230620221924_UpdateHotel")]
+    partial class UpdateHotel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -114,43 +117,18 @@ namespace Hotexper.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Capacity")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("HotelId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
-
-                    b.Property<int>("Standard")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("HotelId");
-
-                    b.ToTable("Rooms");
-                });
-
-            modelBuilder.Entity("Hotexper.Domain.Entities.RoomItem", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Number")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
-                    b.Property<Guid>("RoomId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.HasKey("Id");
 
-                    b.HasIndex("RoomId");
+                    b.HasIndex("HotelId");
 
-                    b.ToTable("RoomItem");
+                    b.ToTable("Rooms");
                 });
 
             modelBuilder.Entity("Hotexper.Domain.Entities.User", b =>
@@ -364,7 +342,7 @@ namespace Hotexper.Api.Migrations
 
             modelBuilder.Entity("Hotexper.Domain.Entities.Reservation", b =>
                 {
-                    b.HasOne("Hotexper.Domain.Entities.RoomItem", "Room")
+                    b.HasOne("Hotexper.Domain.Entities.Room", "Room")
                         .WithMany("Reservations")
                         .HasForeignKey("RoomId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -390,17 +368,6 @@ namespace Hotexper.Api.Migrations
                         .IsRequired();
 
                     b.Navigation("Hotel");
-                });
-
-            modelBuilder.Entity("Hotexper.Domain.Entities.RoomItem", b =>
-                {
-                    b.HasOne("Hotexper.Domain.Entities.Room", "Room")
-                        .WithMany("RoomItems")
-                        .HasForeignKey("RoomId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Room");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -462,11 +429,6 @@ namespace Hotexper.Api.Migrations
                 });
 
             modelBuilder.Entity("Hotexper.Domain.Entities.Room", b =>
-                {
-                    b.Navigation("RoomItems");
-                });
-
-            modelBuilder.Entity("Hotexper.Domain.Entities.RoomItem", b =>
                 {
                     b.Navigation("Reservations");
                 });

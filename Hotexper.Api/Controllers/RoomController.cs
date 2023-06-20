@@ -30,8 +30,10 @@ public class RoomController : ControllerBase
     {
         var room = new Room
         {
-           HotelId = createRoomModel.HotelId,
-           Number = createRoomModel.RoomNumber
+            HotelId = createRoomModel.HotelId,
+            Price = createRoomModel.Price,
+            Capacity = createRoomModel.Capacity,
+            Standard = createRoomModel.Standard
         };
 
         await _roomRepository.CreateAsync(room, cancellationToken);
@@ -41,4 +43,4 @@ public class RoomController : ControllerBase
     }
 }
 
-public record CreateRoomModel(Guid HotelId, string RoomNumber);
+public record CreateRoomModel(Guid HotelId, float Price, int Capacity, int Standard);

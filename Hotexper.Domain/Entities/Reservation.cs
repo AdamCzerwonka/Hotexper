@@ -11,7 +11,7 @@ public class Reservation
     public DateTime To { get; set; }
 
     public Guid RoomId { get; set; }
-    public Room Room { get; set; } = null!;
+    public RoomItem Room { get; set; } = null!;
 
     public string UserId { get; set; } = null!;
     public User User { get; set; } = null!;
