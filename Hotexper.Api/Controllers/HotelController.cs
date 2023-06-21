@@ -33,13 +33,7 @@ public class HotelController : ControllerBase
 
         if (hotels.Any())
         {
-            var result = hotels.Select(x => new HotelResponseDto()
-            {
-                Name = x.Name,
-                Description = x.Description,
-                Id = x.Id,
-                Images = x.HotelImages.Select(i => new ImageDto($"/{i.Id}", i.AltText))
-            }).ToList();
+            var result = hotels.Select(HotelResponseDto.Map).ToList();
             return Ok(result);
         }
 
