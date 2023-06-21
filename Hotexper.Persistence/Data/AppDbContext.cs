@@ -15,6 +15,7 @@ public class AppDbContext : IdentityDbContext<User, IdentityRole, string>
     public DbSet<Room> Rooms => Set<Room>();
     public DbSet<Reservation> Reservations => Set<Reservation>();
     public DbSet<HotelImage> HotelImages => Set<HotelImage>();
+    public DbSet<RoomItem> RoomItems => Set<RoomItem>();
 
     protected override void OnModelCreating(ModelBuilder builder)
     {
