@@ -38,7 +38,7 @@ public class ReservationController : ControllerBase
             UserId = userId
         };
 
-        var roomExists = await _context.Rooms.AsNoTracking()
+        var roomExists = await _context.RoomItems.AsNoTracking()
             .AnyAsync(x => x.Id == reservationModel.RoomId, cancellationToken);
 
         if (!roomExists)
