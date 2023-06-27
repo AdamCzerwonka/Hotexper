@@ -17,7 +17,9 @@ public class IntegrationTest
             {
                 builder.ConfigureServices(services =>
                 {
-                    services.RemoveAll(typeof(AppDbContext));
+                    var descriptor =
+                        services.SingleOrDefault(d => d.ServiceType == typeof(DbContextOptions<AppDbContext>));
+                    services.Remove(descriptor!);
                     services.AddDbContext<AppDbContext>(options => { options.UseInMemoryDatabase("testDb"); });
                 });
             });
