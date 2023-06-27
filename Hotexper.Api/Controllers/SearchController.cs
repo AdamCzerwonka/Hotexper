@@ -9,12 +9,10 @@ namespace Hotexper.Api.Controllers;
 public class SearchController : ControllerBase
 {
     private readonly AppDbContext _context;
-    private readonly ILogger<SearchController> _logger;
 
-    public SearchController(AppDbContext context, ILogger<SearchController> logger)
+    public SearchController(AppDbContext context)
     {
         _context = context;
-        _logger = logger;
     }
 
     [HttpGet]
