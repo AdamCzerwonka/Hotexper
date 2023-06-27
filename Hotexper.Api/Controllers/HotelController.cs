@@ -33,13 +33,7 @@ public class HotelController : ControllerBase
 
         if (hotels.Any())
         {
-            var result = hotels.Select(x => new HotelResponseDto()
-            {
-                Name = x.Name,
-                Description = x.Description,
-                Id = x.Id,
-                Images = x.HotelImages.Select(i => new ImageDto($"/{i.Id}", i.AltText))
-            }).ToList();
+            var result = hotels.Select(HotelResponseDto.Map).ToList();
             return Ok(result);
         }
 
@@ -95,7 +89,19 @@ public class HotelController : ControllerBase
             } while (result is not null);
         }
 
-        var res = await _hotelRepository.Create(model.Name, model.Description, slug, cancellationToken);
+        var hotel = new Hotel
+        {
+            Id = Guid.NewGuid(),
+            Name = model.Name,
+            Description = model.Description,
+            Slug = slug,
+            City = model.City,
+            Street = model.Street,
+            BuldingNumber = model.BuildingNumber
+        };
+
+
+        var res = await _hotelRepository.Create(hotel, cancellationToken);
         return Created("test", HotelResponseDto.Map(res));
     }
 
@@ -116,6 +122,7 @@ public class HotelController : ControllerBase
     }
 }
 
-public record CreateHotelModel(string Name, string Description, string? Slug);
+public record CreateHotelModel(string Name, string Description, string? Slug, string City, string Street,
+    string BuildingNumber);
 
 public record UploadHotelImageModel(string AltText, IFormFile File);

@@ -5,7 +5,7 @@ namespace Hotexper.Domain.Repositories;
 
 public interface IHotelRepository
 {
-    Task<Hotel> Create(string name, string description, string slug, CancellationToken cancellationToken);
+    Task<Hotel> Create(Hotel hotel, CancellationToken cancellationToken);
     Task<List<Hotel>> GetAllAsync(CancellationToken cancellationToken);
     Task<Hotel?> GetByIdAsync(Guid id, CancellationToken cancellationToken);
     Task<Hotel?> GetBySlugAsync(string slug, CancellationToken cancellationToken);

@@ -14,17 +14,10 @@ public class HotelRepository : IHotelRepository
         _context = context;
     }
 
-    public async Task<Hotel> Create(string name, string description, string slug,
+    public async Task<Hotel> Create(Hotel hotel,
         CancellationToken cancellationToken = default)
     {
-        var hotel = new Hotel
-        {
-            Id = Guid.NewGuid(),
-            Name = name,
-            Description = description,
-            Slug = slug
-        };
-
+        hotel.HotelImages = new List<HotelImage>();
         _context.Hotels.Add(hotel);
         await _context.SaveChangesAsync(cancellationToken);
 

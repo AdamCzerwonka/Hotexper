@@ -38,13 +38,15 @@ public class HotelControllerTests
         _hotelRepository
             .Setup(x =>
                 x.Create(
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
+                    It.IsAny<Hotel>(),
                     It.IsAny<CancellationToken>()))
             .ReturnsAsync(
-                (string n, string d, string s, CancellationToken _) =>
-                    new Hotel { Name = n, Description = d, Slug = s, HotelImages = new List<HotelImage>() });
+                (Hotel hotel, CancellationToken _) =>
+                {
+                    hotel.HotelImages = new List<HotelImage>();
+                    return hotel;
+                }
+            );
 
         _hotelRepository
             .Setup(
@@ -54,7 +56,7 @@ public class HotelControllerTests
             .ReturnsAsync(
                 (string s, CancellationToken _) => hotels.FirstOrDefault(x => x.Slug == s));
 
-        var model = new CreateHotelModel(name, "Test", slug);
+        var model = new CreateHotelModel(name, "Test", slug, "Test", "Test", "test");
 
         var result = (await _sut.Create(model, CancellationToken.None)).Result as CreatedResult;
         var hotel = result?.Value as HotelResponseDto;
@@ -69,12 +71,14 @@ public class HotelControllerTests
         _hotelRepository
             .Setup(x =>
                 x.Create(
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
-                    It.IsAny<string>(),
+                    It.IsAny<Hotel>(),
                     It.IsAny<CancellationToken>()))
-            .ReturnsAsync((string name, string desc, string slug, CancellationToken _) =>
-                new Hotel { Name = name, Description = desc, Slug = slug });
+            .ReturnsAsync((Hotel hotel, CancellationToken _) =>
+                {
+                    hotel.HotelImages = new List<HotelImage>();
+                    return hotel;
+                }
+            );
 
         _hotelRepository
             .Setup(
@@ -83,7 +87,7 @@ public class HotelControllerTests
                     It.IsAny<CancellationToken>()))
             .ReturnsAsync(new Hotel());
 
-        var model = new CreateHotelModel("Test Name", "Test", "nice_hotel");
+        var model = new CreateHotelModel("Test Name", "Test", "nice_hotel", "Test", "Test", "Test");
 
         var result = (await _sut.Create(model, CancellationToken.None)).Result as UnprocessableEntityObjectResult;
         var error = result?.Value as ErrorModel;

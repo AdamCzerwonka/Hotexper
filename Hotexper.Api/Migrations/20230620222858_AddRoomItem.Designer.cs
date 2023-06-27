@@ -4,6 +4,7 @@ using Hotexper.Persistence.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Hotexper.Api.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230620222858_AddRoomItem")]
+    partial class AddRoomItem
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -114,17 +117,8 @@ namespace Hotexper.Api.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<int>("Capacity")
-                        .HasColumnType("int");
-
                     b.Property<Guid>("HotelId")
                         .HasColumnType("uniqueidentifier");
-
-                    b.Property<float>("Price")
-                        .HasColumnType("real");
-
-                    b.Property<int>("Standard")
-                        .HasColumnType("int");
 
                     b.HasKey("Id");
 
@@ -150,7 +144,7 @@ namespace Hotexper.Api.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("RoomItems");
+                    b.ToTable("RoomItem");
                 });
 
             modelBuilder.Entity("Hotexper.Domain.Entities.User", b =>
