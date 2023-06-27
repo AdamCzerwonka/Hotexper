@@ -1,27 +1,25 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System.Net;
 using FluentEmail.Core;
 using FluentValidation;
+using Hotexper.Api.DTOs;
 using Hotexper.Api.Models;
 using Hotexper.Domain.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
+using Microsoft.EntityFrameworkCore;
 
 namespace Hotexper.Api.Controllers;
 
 [Route("/api/account")]
 public class AccountController : ControllerBase
 {
-    private readonly ILogger<AccountController> _logger;
     private readonly UserManager<User> _userManager;
     private readonly IFluentEmail _fluentEmail;
     private readonly IValidator<CreateUserModel> _createUserValidator;
 
-    public AccountController(
-        ILogger<AccountController> logger,
-        UserManager<User> userManager, IFluentEmail fluentEmail, IValidator<CreateUserModel> createUserValidator)
+    public AccountController(UserManager<User> userManager, IFluentEmail fluentEmail,
+        IValidator<CreateUserModel> createUserValidator)
     {
-        _logger = logger;
         _userManager = userManager;
         _fluentEmail = fluentEmail;
         _createUserValidator = createUserValidator;
@@ -85,6 +83,34 @@ public class AccountController : ControllerBase
         }
 
         return BadRequest();
+    }
+
+    [HttpGet("{userId:guid}")]
+    public async Task<IActionResult> Get(Guid userId)
+    {
+        var user = await _userManager.FindByIdAsync(userId.ToString());
+        if (user is null)
+        {
+            var result = new ErrorModel(HttpStatusCode.NotFound, new[] { "User with given id does not exists" });
+            return NotFound(result);
+        }
+
+        var roles = await _userManager.GetRolesAsync(user);
+        var userResponse = UserResponse.MapToResponse(user);
+        userResponse.Roles = roles;
+        return Ok(userResponse);
+    }
+
+    [HttpGet]
+    public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
+    {
+        var users = await _userManager
+            .Users
+            .AsNoTracking()
+            .Select(x => UserResponse.MapToResponse(x))
+            .ToListAsync(cancellationToken);
+
+        return Ok(users);
     }
 }
 
