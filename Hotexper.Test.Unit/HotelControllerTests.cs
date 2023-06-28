@@ -6,6 +6,7 @@ using Hotexper.Api.Services;
 using Hotexper.Domain.Entities;
 using Hotexper.Domain.Repositories;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
 using Moq;
 
 namespace Hotexper.Tests;
@@ -15,11 +16,14 @@ public class HotelControllerTests
     private readonly IHotelImageRepository _imageRepository = new Mock<IHotelImageRepository>().Object;
     private readonly IImageService _imageService = new Mock<IImageService>().Object;
     private readonly Mock<IHotelRepository> _hotelRepository = new();
+    private readonly Mock<IRoleRepository> _roleRepository = new();
+    private readonly Mock<ILogger<HotelController>> _logger = new();
     private readonly HotelController _sut;
 
     public HotelControllerTests()
     {
-        _sut = new HotelController(_hotelRepository.Object, _imageService, _imageRepository);
+        _sut = new HotelController(_hotelRepository.Object, _imageService, _imageRepository, _logger.Object,
+            _roleRepository.Object);
     }
 
 
@@ -124,7 +128,7 @@ public class HotelControllerTests
 
 
     [Fact]
-    public async Task TestGetAll_ShouldReturnErorr_WhenHotelsDoesNotExists()
+    public async Task TestGetAll_ShouldEmptyList_WhenHotelsDoesNotExists()
     {
         _hotelRepository
             .Setup(
@@ -132,13 +136,11 @@ public class HotelControllerTests
                     It.IsAny<CancellationToken>()))
             .ReturnsAsync(new List<Hotel>());
 
-        var result = (await _sut.GetAll(CancellationToken.None)) as NotFoundObjectResult;
+        var result = (await _sut.GetAll(CancellationToken.None)) as OkObjectResult;
         result.Should().NotBeNull();
 
-        var data = result!.Value as ErrorModel;
-        data.Should().NotBeNull();
-        data!.StatusCode.Should().Be(404);
-        data.Errors.Should().NotBeNullOrEmpty();
+        var data = result!.Value as List<HotelResponseDto>;
+        data.Should().BeEmpty();
     }
 
     [Fact]
