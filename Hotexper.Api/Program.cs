@@ -56,6 +56,7 @@ try
     builder.Services.AddTransient<IJwtTokenService, JwtTokenService>();
     builder.Services.AddTransient<IImageService, ImageService>();
     builder.Services.AddTransient<IHotelImageRepository, HotelImageRepository>();
+    builder.Services.AddTransient<IRoleRepository, RoleRepository>();
 
     builder.Services.AddSwaggerGen(setup =>
     {
