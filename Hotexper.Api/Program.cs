@@ -56,6 +56,7 @@ try
     builder.Services.AddTransient<IJwtTokenService, JwtTokenService>();
     builder.Services.AddTransient<IImageService, ImageService>();
     builder.Services.AddTransient<IHotelImageRepository, HotelImageRepository>();
+    builder.Services.AddTransient<IRoleRepository, RoleRepository>();
 
     builder.Services.AddSwaggerGen(setup =>
     {
@@ -116,6 +117,7 @@ try
 
     builder.Services.AddControllers();
     var app = builder.Build();
+    app.UseSerilogRequestLogging();
 
     app.UseCors("default");
 
@@ -129,7 +131,7 @@ try
     app.MapControllers();
     app.Run();
 }
-catch (HostAbortedException _)
+catch (HostAbortedException)
 {
 }
 catch (Exception e)
@@ -139,4 +141,8 @@ catch (Exception e)
 finally
 {
     Log.CloseAndFlush();
+}
+
+public partial class Program
+{
 }
