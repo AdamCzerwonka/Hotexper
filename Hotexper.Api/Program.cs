@@ -117,6 +117,7 @@ try
 
     builder.Services.AddControllers();
     var app = builder.Build();
+    app.UseSerilogRequestLogging();
 
     app.UseCors("default");
 
