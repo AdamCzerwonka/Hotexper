@@ -16,11 +16,9 @@ static async Task SeedUsers(HttpClient client)
         .RuleFor(x => x.Password2, _ => "Test123!")
         .Generate(100);
 
-    foreach (var user in fakeUsers)
-    {
-        var result = await client.PostAsJsonAsync("/api/account", user);
-        Console.WriteLine(result.StatusCode);
-    }
+    var requests = fakeUsers.Select(x => client.PostAsJsonAsync("/api/account", x));
+
+    await Task.WhenAll(requests);
 }
 
 public class CreateUserModel
