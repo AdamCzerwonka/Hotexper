@@ -26,8 +26,8 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost]
-    [ProducesResponseType(typeof(IEnumerable<string>), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> CreateAccount([FromBody] CreateUserModel createUser,
         CancellationToken cancellationToken)
     {
@@ -59,7 +59,8 @@ public class AccountController : ControllerBase
         var result = await _userManager.CreateAsync(user, createUser.Password);
         if (!result.Succeeded)
         {
-            return BadRequest(result.Errors);
+            var error = Error.UnprocessableEntityError(result.Errors.Select(x=>x.Description));
+            return UnprocessableEntity(error);
         }
 
         var token = await _userManager.GenerateEmailConfirmationTokenAsync(user);
@@ -70,12 +71,15 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("{id:guid}/verify")]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailModel verifyEmailModel, Guid id)
     {
         var user = await _userManager.FindByIdAsync(id.ToString());
         if (user is null)
         {
-            return BadRequest();
+            var error = Error.UnprocessableEntityError(new[] { "User with given id does not exists" });
+            return UnprocessableEntity(error);
         }
 
         var result = await _userManager.ConfirmEmailAsync(user, verifyEmailModel.Token);
@@ -84,10 +88,12 @@ public class AccountController : ControllerBase
             return Ok();
         }
 
-        return BadRequest();
+        return BadRequest(Error.BadRequestError(new[] { "Something went wrong during email verification" }));
     }
 
     [HttpGet("{userId:guid}")]
+    [ProducesResponseType(typeof(UserResponse), StatusCodes.Status200OK)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status404NotFound)]
     public async Task<IActionResult> Get(Guid userId)
     {
         var user = await _userManager.FindByIdAsync(userId.ToString());
@@ -104,6 +110,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpGet]
+    [ProducesResponseType(typeof(IEnumerable<UserResponse>), StatusCodes.Status200OK)]
     public async Task<IActionResult> GetAll(CancellationToken cancellationToken)
     {
         var users = await _userManager
