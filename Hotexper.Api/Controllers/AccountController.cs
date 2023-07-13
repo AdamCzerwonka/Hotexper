@@ -49,6 +49,8 @@ public class AccountController : ControllerBase
 
         var user = new User()
         {
+            Firstname = createUser.Firstname,
+            Lastname = createUser.Lastname,
             UserName = createUser.Firstname + createUser.Lastname,
             Email = createUser.Email,
             PhoneNumber = createUser.PhoneNumber
