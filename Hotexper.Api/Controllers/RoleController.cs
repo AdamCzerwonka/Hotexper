@@ -28,7 +28,7 @@ public class RoleController : ControllerBase
         var result = await _roleManager.CreateAsync(role);
         if (!result.Succeeded)
         {
-            var response = new ErrorModel(HttpStatusCode.BadRequest, result.Errors.Select(x => x.Description));
+            var response = new Error(HttpStatusCode.BadRequest, result.Errors.Select(x => x.Description));
             return BadRequest(response);
         }
 

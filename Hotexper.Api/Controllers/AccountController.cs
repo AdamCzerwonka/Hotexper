@@ -34,7 +34,7 @@ public class AccountController : ControllerBase
         var validationResult = await _createUserValidator.ValidateAsync(createUser, cancellationToken);
         if (!validationResult.IsValid)
         {
-            var error = new ErrorModel(StatusCodes.Status422UnprocessableEntity,
+            var error = new Error(StatusCodes.Status422UnprocessableEntity,
                 validationResult.Errors.Select(x => x.ErrorMessage));
             return UnprocessableEntity(error);
         }
@@ -42,7 +42,7 @@ public class AccountController : ControllerBase
         var userIdDb = await _userManager.FindByEmailAsync(createUser.Email);
         if (userIdDb is not null)
         {
-            var error = new ErrorModel(StatusCodes.Status422UnprocessableEntity,
+            var error = new Error(StatusCodes.Status422UnprocessableEntity,
                 new List<string>() { "User with given email already exists" });
             return UnprocessableEntity(error);
         }
@@ -93,7 +93,7 @@ public class AccountController : ControllerBase
         var user = await _userManager.FindByIdAsync(userId.ToString());
         if (user is null)
         {
-            var result = new ErrorModel(HttpStatusCode.NotFound, new[] { "User with given id does not exists" });
+            var result = new Error(HttpStatusCode.NotFound, new[] { "User with given id does not exists" });
             return NotFound(result);
         }
 

@@ -42,7 +42,7 @@ public class HotelController : ControllerBase
 
     [HttpGet("{slug}")]
     [ProducesResponseType(typeof(HotelResponseDto), 200)]
-    [ProducesResponseType(typeof(ErrorModel), 404)]
+    [ProducesResponseType(typeof(Error), 404)]
     public async Task<IActionResult> Get(string slug, CancellationToken cancellationToken)
     {
         var hotel = await _hotelRepository.GetBySlugWithHotelImagesAsync(slug, cancellationToken);
@@ -53,7 +53,7 @@ public class HotelController : ControllerBase
             return Ok(hotelDto);
         }
 
-        var error = new ErrorModel(HttpStatusCode.NotFound, new[] { "Hotel with given slug does not exists" });
+        var error = new Error(HttpStatusCode.NotFound, new[] { "Hotel with given slug does not exists" });
         return NotFound(error);
     }
 
@@ -86,7 +86,7 @@ public class HotelController : ControllerBase
 
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
-    [ProducesResponseType(typeof(ErrorModel), StatusCodes.Status422UnprocessableEntity)]
+    [ProducesResponseType(typeof(Error), StatusCodes.Status422UnprocessableEntity)]
     public async Task<ActionResult<HotelResponseDto>> Create([FromBody] CreateHotelModel model,
         CancellationToken cancellationToken)
     {
@@ -98,7 +98,7 @@ public class HotelController : ControllerBase
         catch (Exception e)
         {
             _logger.LogError("Hotel slug already exists. {Message}", e.Message);
-            var error = new ErrorModel(HttpStatusCode.UnprocessableEntity, new[] { e.Message });
+            var error = new Error(HttpStatusCode.UnprocessableEntity, new[] { e.Message });
             return UnprocessableEntity(error);
         }
 

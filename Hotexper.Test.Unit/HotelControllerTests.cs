@@ -94,7 +94,7 @@ public class HotelControllerTests
         var model = new CreateHotelModel("Test Name", "Test", "nice_hotel", "Test", "Test", "Test");
 
         var result = (await _sut.Create(model, CancellationToken.None)).Result as UnprocessableEntityObjectResult;
-        var error = result?.Value as ErrorModel;
+        var error = result?.Value as Error;
 
         error.Should().NotBeNull();
         error!.StatusCode.Should().Be(422);
@@ -176,7 +176,7 @@ public class HotelControllerTests
         var result = await _sut.Get("Test", CancellationToken.None) as NotFoundObjectResult;
         result.Should().NotBeNull();
 
-        var data = result!.Value as ErrorModel;
+        var data = result!.Value as Error;
         data.Should().NotBeNull();
         data!.StatusCode.Should().Be(404);
         data.Errors.Should().NotBeNullOrEmpty();
