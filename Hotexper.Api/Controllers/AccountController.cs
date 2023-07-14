@@ -4,12 +4,15 @@ using FluentValidation;
 using Hotexper.Api.DTOs;
 using Hotexper.Api.Models;
 using Hotexper.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 namespace Hotexper.Api.Controllers;
 
+[Authorize]
+[ApiController]
 [Route("/api/account")]
 public class AccountController : ControllerBase
 {
@@ -26,6 +29,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost]
+    [AllowAnonymous]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> CreateAccount([FromBody] CreateUserModel createUser,
@@ -71,6 +75,7 @@ public class AccountController : ControllerBase
     }
 
     [HttpPost("{id:guid}/verify")]
+    [AllowAnonymous]
     [ProducesResponseType(typeof(Error), StatusCodes.Status400BadRequest)]
     [ProducesResponseType(typeof(Error), StatusCodes.Status422UnprocessableEntity)]
     public async Task<IActionResult> VerifyEmail([FromBody] VerifyEmailModel verifyEmailModel, Guid id)
