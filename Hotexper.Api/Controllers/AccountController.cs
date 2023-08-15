@@ -121,7 +121,14 @@ public class AccountController : ControllerBase
         var users = await _userManager
             .Users
             .AsNoTracking()
-            .Select(x => UserResponse.MapToResponse(x))
+            .Select(x => new UserResponse
+            {
+                Id = Guid.Parse(x.Id),
+                Email = x.Email!,
+                Firstname = x.Firstname,
+                Lastname = x.Lastname,
+                Username = x.UserName!
+            })
             .ToListAsync(cancellationToken);
 
         return Ok(users);
